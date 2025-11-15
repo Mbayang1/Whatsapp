@@ -1,6 +1,6 @@
 import React from "react";
 import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet } from "react-native";
-import { ArrowLeft, Phone, Video, Star, Trash2, User, Key, Info, Bell } from "lucide-react-native";
+import { ArrowLeft, Bell, User, Key, Trash2 } from "lucide-react-native";
 import { useRouter } from "expo-router";
 
 export default function UserProfile() {

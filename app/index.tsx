@@ -2,9 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, FlatList, TextInput, Image, TouchableOpacity, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Search, Phone, MoreVertical } from "lucide-react-native";
-import { useLocalSearchParams } from 'expo-router';
- // Now you know which chat to show
-
+import { useRouter } from "expo-router";
 
 // Types
 interface User {
@@ -12,7 +10,6 @@ interface User {
   name: string;
   avatar: string;
   status: string;
-  lastSeen?: string;
 }
 
 interface Chat {
@@ -26,7 +23,7 @@ interface Chat {
 // Mock data
 const mockUsers: User[] = [
   { id: "1", name: "Alex Johnson", avatar: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=900", status: "Online" },
-  { id: "2", name: "Sarah Miller", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=900", status: "Offline", lastSeen: "2 hours ago" },
+  { id: "2", name: "Sarah Miller", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=900", status: "Offline" },
   { id: "3", name: "Michael Chen", avatar: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=900", status: "Online" },
 ];
 
@@ -40,7 +37,7 @@ export default function ChatApp() {
   const [chats, setChats] = useState<Chat[]>(mockChats);
   const [users, setUsers] = useState<User[]>(mockUsers);
   const [searchQuery, setSearchQuery] = useState("");
-  const { userId } = useLocalSearchParams();
+  const router = useRouter();
 
   useEffect(() => {
     loadData();
@@ -62,28 +59,32 @@ export default function ChatApp() {
     return user?.name.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
+  const openChat = (userId: string) => {
+    router.push(`/chat-detail?userId=${userId}`);
+  };
+
   const renderItem = ({ item }: { item: Chat }) => {
     const user = users.find(u => u.id === item.userId);
     if (!user) return null;
-    return (
-      <TouchableOpacity style={styles.chatItem}>
-  <Image source={{ uri: user.avatar }} style={styles.avatar} />
-  <View style={styles.chatText}>
-    <View style={styles.chatHeader}>
-      <Text style={styles.name}>{user.name}</Text>
-      <Text style={styles.timestamp}>{item.timestamp}</Text>
-    </View>
-    <Text style={item.unreadCount > 0 ? styles.lastMessageUnread : styles.lastMessage}>
-      {item.lastMessage}
-    </Text>
-  </View>
-  {item.unreadCount > 0 && (
-    <View style={styles.unreadBadge}>
-      <Text style={styles.unreadText}>{item.unreadCount}</Text>
-    </View>
-  )}
-</TouchableOpacity>
 
+    return (
+      <TouchableOpacity style={styles.chatItem} onPress={() => openChat(user.id)}>
+        <Image source={{ uri: user.avatar }} style={styles.avatar} />
+        <View style={styles.chatText}>
+          <View style={styles.chatHeader}>
+            <Text style={styles.name}>{user.name}</Text>
+            <Text style={styles.timestamp}>{item.timestamp}</Text>
+          </View>
+          <Text style={item.unreadCount > 0 ? styles.lastMessageUnread : styles.lastMessage}>
+            {item.lastMessage}
+          </Text>
+        </View>
+        {item.unreadCount > 0 && (
+          <View style={styles.unreadBadge}>
+            <Text style={styles.unreadText}>{item.unreadCount}</Text>
+          </View>
+        )}
+      </TouchableOpacity>
     );
   };
 

@@ -1,7 +1,10 @@
-// app/layout.tsx
 import React from "react";
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return <View style={{ flex: 1 }}>{children}</View>;
+  return <View style={styles.container}>{children}</View>;
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: "#F9FAFB" },
+});

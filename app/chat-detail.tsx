@@ -1,41 +1,27 @@
 import React, { useState, useRef, useEffect } from "react";
 import { View, Text, TextInput, ScrollView, TouchableOpacity, Image, KeyboardAvoidingView, Platform, StyleSheet } from "react-native";
+import { useLocalSearchParams } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ArrowLeft, Send, Paperclip, Mic } from "lucide-react-native";
-import { useRouter } from "expo-router";
-import { useLocalSearchParams } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Message {
   id: string;
   text?: string;
-  image?: string;
-  contact?: { name: string; phoneNumber: string };
   timestamp: string;
-  sender: 'me' | 'contact';
-  status?: 'sent' | 'read';
+  sender: "me" | "contact";
 }
 
 export default function ChatDetailScreen() {
-  const router = useRouter();
-  const scrollViewRef = useRef<ScrollView>(null);
-  const [message, setMessage] = useState("");
   const { userId } = useLocalSearchParams();
-
-  const contact = { name: "Alex Johnson", avatar: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=900", isOnline: true, lastSeen: "2 hours ago" };
-  const [messages, setMessages] = useState([
-    { id: "1", text: "Hey!", sender: "contact", timestamp: "10:30 AM", status: "read" },
-    { id: "2", text: "Hi, how are you?", sender: "me", timestamp: "10:31 AM", status: "read" },
-  ]);
-
-  const ChatDetailScreen = () => {
-  const router = useRouter();
-  const { userId } = useLocalSearchParams();
-
   const scrollViewRef = useRef<ScrollView>(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
 
-  // Load messages when the screen mounts or when userId changes
+  const contact = {
+    name: "Alex Johnson",
+    avatar: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=900",
+  };
+
   useEffect(() => {
     const loadMessages = async () => {
       const storedMessages = await AsyncStorage.getItem(`messages-${userId}`);
@@ -44,12 +30,17 @@ export default function ChatDetailScreen() {
     loadMessages();
   }, [userId]);
 
-  // ...rest of your ChatDetailScreen code
-};
-
-  const sendMessage = () => {
-    if (message.trim() === "") return;
-    setMessages([...messages, { id: Date.now().toString(), text: message, sender: "me", timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), status: "sent" }]);
+  const sendMessage = async () => {
+    if (!message.trim()) return;
+    const newMsg = {
+      id: Date.now().toString(),
+      text: message,
+      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      sender: "me" as const,
+    };
+    const updated = [...messages, newMsg];
+    setMessages(updated);
+    await AsyncStorage.setItem(`messages-${userId}`, JSON.stringify(updated));
     setMessage("");
     setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100);
   };
@@ -57,20 +48,17 @@ export default function ChatDetailScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity onPress={() => {}}>
           <ArrowLeft size={24} color="#fff" />
         </TouchableOpacity>
         <View style={styles.contactInfo}>
           <Image source={{ uri: contact.avatar }} style={styles.avatar} />
-          <View>
-            <Text style={styles.name}>{contact.name}</Text>
-            <Text style={styles.status}>{contact.isOnline ? "Online" : `Last seen ${contact.lastSeen}`}</Text>
-          </View>
+          <Text style={styles.name}>{contact.name}</Text>
         </View>
       </View>
 
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
-        <ScrollView ref={scrollViewRef} style={styles.messagesContainer}>
+        <ScrollView ref={scrollViewRef} style={styles.messagesContainer} onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}>
           {messages.map(msg => (
             <View key={msg.id} style={[styles.messageBubble, msg.sender === "me" ? styles.myMessage : styles.contactMessage]}>
               <Text style={msg.sender === "me" ? styles.myText : styles.contactText}>{msg.text}</Text>
@@ -100,11 +88,10 @@ export default function ChatDetailScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#F3F4F6" },
-  header: { backgroundColor: "#10B981", flexDirection: "row", alignItems: "center", padding: 12, paddingTop: 50 },
+  header: { flexDirection: "row", alignItems: "center", paddingTop: 50, paddingHorizontal: 16, paddingBottom: 12, backgroundColor: "#10B981" },
   contactInfo: { flexDirection: "row", alignItems: "center", marginLeft: 12 },
   avatar: { width: 40, height: 40, borderRadius: 20, marginRight: 8 },
-  name: { fontWeight: "bold", fontSize: 16, color: "#fff" },
-  status: { fontSize: 12, color: "#D1FAE5" },
+  name: { color: "#fff", fontWeight: "bold", fontSize: 16 },
   messagesContainer: { flex: 1, padding: 12 },
   messageBubble: { padding: 10, borderRadius: 12, marginVertical: 4, maxWidth: "80%" },
   myMessage: { backgroundColor: "#10B981", alignSelf: "flex-end", borderTopRightRadius: 0 },
