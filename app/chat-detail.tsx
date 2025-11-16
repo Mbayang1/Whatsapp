@@ -3,17 +3,19 @@ import { View, Text, TextInput, ScrollView, TouchableOpacity, Image, KeyboardAvo
 import { useLocalSearchParams, useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ArrowLeft, Send, Paperclip, Mic } from "lucide-react-native";
+import * as ImagePicker from 'expo-image-picker';
 
 interface Message {
   id: string;
   text?: string;
+  image?: string; // added image property
   timestamp: string;
   sender: "me" | "contact";
 }
 
 export default function ChatDetailScreen() {
   const { userId } = useLocalSearchParams();
-  const router = useRouter(); // <-- added this
+  const router = useRouter();
   const scrollViewRef = useRef<ScrollView>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState("");
@@ -31,13 +33,42 @@ export default function ChatDetailScreen() {
     loadMessages();
   }, [userId]);
 
+  // Function to pick an image from gallery
+    const pickImage = async () => {
+    // Request permissions
+        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (!permissionResult.granted) return alert("Permission to access gallery is required!");
+
+        // Pick an image
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: 'images', // <-- lowercase 'images'
+            quality: 0.5,
+        });
+
+        if (!result.canceled && result.assets.length > 0) {
+            const newMsg: Message = {
+            id: Date.now().toString(),
+            image: result.assets[0].uri,
+            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+            sender: "me",
+            };
+            const updated = [...messages, newMsg];
+            setMessages(updated);
+            await AsyncStorage.setItem(`messages-${userId}`, JSON.stringify(updated));
+            setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100);
+        }
+        };
+
+
+
+
   const sendMessage = async () => {
     if (!message.trim()) return;
-    const newMsg = {
+    const newMsg: Message = {
       id: Date.now().toString(),
       text: message,
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      sender: "me" as const,
+      sender: "me",
     };
     const updated = [...messages, newMsg];
     setMessages(updated);
@@ -58,8 +89,7 @@ export default function ChatDetailScreen() {
             <Image source={{ uri: contact.avatar }} style={styles.avatar} />
             <Text style={styles.name}>{contact.name}</Text>
         </View>
-        </View>
-
+      </View>
 
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
         <ScrollView
@@ -69,14 +99,20 @@ export default function ChatDetailScreen() {
         >
           {messages.map(msg => (
             <View key={msg.id} style={[styles.messageBubble, msg.sender === "me" ? styles.myMessage : styles.contactMessage]}>
-              <Text style={msg.sender === "me" ? styles.myText : styles.contactText}>{msg.text}</Text>
+              {msg.text ? <Text style={msg.sender === "me" ? styles.myText : styles.contactText}>{msg.text}</Text> : null}
+              {msg.image ? (
+                <Image
+                  source={{ uri: msg.image }}
+                  style={{ width: 200, height: 200, borderRadius: 12, marginTop: 4 }}
+                />
+              ) : null}
               <Text style={styles.timestamp}>{msg.timestamp}</Text>
             </View>
           ))}
         </ScrollView>
 
         <View style={styles.inputContainer}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={pickImage}>
             <Paperclip size={24} color="#666" />
           </TouchableOpacity>
           <TextInput
