@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { Camera, MoreVertical, Search } from 'lucide-react-native';
 import { useRouter, usePathname } from 'expo-router';
+import * as ImagePicker from 'expo-image-picker';
 
 interface StatusUpdate {
   id: string;
@@ -27,6 +28,24 @@ const StatusScreen = () => {
     time: 'Just now',
     views: 32,
   });
+
+  // NEW: store user's status image
+  const [myStatusImage, setMyStatusImage] = useState<string | null>(null);
+
+  // NEW: pick from gallery
+  const pickImage = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permissionResult.granted) return alert("Permission to access gallery is required!");
+  
+      const result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: 'images',
+          quality: 0.5,
+      });
+
+    if (!result.canceled) {
+      setMyStatusImage(result.assets[0].uri);
+    }
+  };
 
   const [recentUpdates] = useState<StatusUpdate[]>([
     {
@@ -79,7 +98,6 @@ const StatusScreen = () => {
     },
   ]);
 
-  // Top tabs for navigation
   const topTabs = [
     { name: 'Chats', route: '/' },
     { name: 'Status', route: '/status' },
@@ -88,16 +106,16 @@ const StatusScreen = () => {
 
   return (
     <View style={styles.container}>
+
       {/* Top Tabs */}
       <View style={styles.topTabs}>
         {topTabs.map(tab => (
           <TouchableOpacity 
             key={tab.name} 
             onPress={() => router.push(tab.route as "/" | "/status" | "/call-history")}
-         >
+          >
             <Text style={path === tab.route ? styles.activeTab : styles.inactiveTab}>{tab.name}</Text>
-           </TouchableOpacity>
-
+          </TouchableOpacity>
         ))}
       </View>
 
@@ -117,15 +135,25 @@ const StatusScreen = () => {
       </View>
 
       <ScrollView style={{ flex: 1 }}>
+
         {/* My Status */}
         <View style={{ backgroundColor: 'white', padding: 16, marginTop: 2 }}>
           <Text style={{ color: '#6b7280', fontWeight: '600', marginBottom: 8 }}>My Status</Text>
-          <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }}>
+
+          <TouchableOpacity 
+            style={{ flexDirection: 'row', alignItems: 'center' }}
+            onPress={pickImage}
+          >
             <View style={{ position: 'relative' }}>
               <Image
-                source={{ uri: 'https://i.pinimg.com/736x/01/a5/1e/01a51e0fa16a202b7bad39cdb73cd9b8.jpg' }}
+                source={{
+                  uri: myStatusImage 
+                    ? myStatusImage
+                    : 'https://i.pinimg.com/736x/01/a5/1e/01a51e0fa16a202b7bad39cdb73cd9b8.jpg'
+                }}
                 style={{ width: 56, height: 56, borderRadius: 28 }}
               />
+
               <View style={{
                 position: 'absolute',
                 bottom: 0,
@@ -139,6 +167,7 @@ const StatusScreen = () => {
                 <Camera size={16} color="white" />
               </View>
             </View>
+
             <View style={{ marginLeft: 16 }}>
               <Text style={{ fontWeight: '600', color: '#111' }}>My Status</Text>
               <Text style={{ color: '#6b7280', fontSize: 12 }}>{myStatus.time}</Text>
@@ -149,6 +178,7 @@ const StatusScreen = () => {
         {/* Recent Updates */}
         <View style={{ backgroundColor: 'white', padding: 16, marginTop: 8 }}>
           <Text style={{ color: '#6b7280', fontWeight: '600', marginBottom: 8 }}>Recent updates</Text>
+
           {recentUpdates.map(status => (
             <TouchableOpacity key={status.id} style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 8 }}>
               <View style={{ position: 'relative' }}>
@@ -156,6 +186,7 @@ const StatusScreen = () => {
                   source={{ uri: status.avatar }}
                   style={{ width: 56, height: 56, borderRadius: 28 }}
                 />
+
                 {!status.isViewed && (
                   <View style={{
                     position: 'absolute',
@@ -166,6 +197,7 @@ const StatusScreen = () => {
                   }} />
                 )}
               </View>
+
               <View style={{ marginLeft: 16 }}>
                 <Text style={{ fontWeight: '600', color: '#111' }}>{status.userName}</Text>
                 <Text style={{ color: '#6b7280', fontSize: 12 }}>{status.time}</Text>
@@ -182,24 +214,28 @@ const StatusScreen = () => {
         </View>
       </ScrollView>
 
-      {/* Floating Action Button */}
-      <TouchableOpacity style={{
-        position: 'absolute',
-        bottom: 24,
-        right: 24,
-        backgroundColor: '#10B981',
-        width: 56,
-        height: 56,
-        borderRadius: 28,
-        alignItems: 'center',
-        justifyContent: 'center',
-        shadowColor: '#000',
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
-        shadowOffset: { width: 0, height: 2 }
-      }}>
+      {/* Floating Action Button (opens gallery) */}
+      <TouchableOpacity
+        onPress={pickImage}
+        style={{
+          position: 'absolute',
+          bottom: 24,
+          right: 24,
+          backgroundColor: '#10B981',
+          width: 56,
+          height: 56,
+          borderRadius: 28,
+          alignItems: 'center',
+          justifyContent: 'center',
+          shadowColor: '#000',
+          shadowOpacity: 0.2,
+          shadowRadius: 4,
+          shadowOffset: { width: 0, height: 2 }
+        }}
+      >
         <Camera size={24} color="white" />
       </TouchableOpacity>
+
     </View>
   );
 };
