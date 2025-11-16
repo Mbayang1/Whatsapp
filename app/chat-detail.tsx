@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { View, Text, TextInput, ScrollView, TouchableOpacity, Image, KeyboardAvoidingView, Platform, StyleSheet } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ArrowLeft, Send, Paperclip, Mic } from "lucide-react-native";
 
@@ -13,6 +13,7 @@ interface Message {
 
 export default function ChatDetailScreen() {
   const { userId } = useLocalSearchParams();
+  const router = useRouter(); // <-- added this
   const scrollViewRef = useRef<ScrollView>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState("");
@@ -47,18 +48,25 @@ export default function ChatDetailScreen() {
 
   return (
     <View style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => {}}>
-          <ArrowLeft size={24} color="#fff" />
+        <TouchableOpacity onPress={() => router.back()}>
+            <ArrowLeft size={24} color="#fff" />
         </TouchableOpacity>
+
         <View style={styles.contactInfo}>
-          <Image source={{ uri: contact.avatar }} style={styles.avatar} />
-          <Text style={styles.name}>{contact.name}</Text>
+            <Image source={{ uri: contact.avatar }} style={styles.avatar} />
+            <Text style={styles.name}>{contact.name}</Text>
         </View>
-      </View>
+        </View>
+
 
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
-        <ScrollView ref={scrollViewRef} style={styles.messagesContainer} onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}>
+        <ScrollView
+          ref={scrollViewRef}
+          style={styles.messagesContainer}
+          onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
+        >
           {messages.map(msg => (
             <View key={msg.id} style={[styles.messageBubble, msg.sender === "me" ? styles.myMessage : styles.contactMessage]}>
               <Text style={msg.sender === "me" ? styles.myText : styles.contactText}>{msg.text}</Text>
