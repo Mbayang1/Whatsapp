@@ -10,15 +10,20 @@ interface Chat { id: string; userId: string; lastMessage: string; timestamp: str
 
 // Mock data
 const mockUsers: User[] = [
-  { id: "1", name: "Alex Johnson", avatar: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=900", status: "Online" },
-  { id: "2", name: "Sarah Miller", avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=900", status: "Offline" },
-  { id: "3", name: "Michael Chen", avatar: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=900", status: "Online" },
+  { id: "1", name: "Tima", avatar: "https://i.pinimg.com/originals/c9/49/0b/c9490b02e0d6ce748b57f48803760081.png", status: "Online" },
+  { id: "2", name: "Amina", avatar: "https://i.pinimg.com/originals/8d/31/58/8d31584b0cab055f2c7a9d04fc461d32.jpg", status: "Offline" },
+  { id: "3", name: "Tata Fatou", avatar: "https://media.istockphoto.com/id/1392583398/photo/portrait-40-year-old-black-african-woman.jpg?s=1024x1024&w=is&k=20&c=7Pz4ovPlix-OqxdIJEQDx8gM3ChWTgR6sq2AN1ooh9M=", status: "Online" },
+  { id: "4", name: "Monique starrrr", avatar: "https://i.pinimg.com/originals/68/d4/6d/68d46d54aac4b6315415ffed5437c3e3.jpg", status: "Online" },
+  { id: "5", name: "Adjzeuuuu", avatar: "https://i.pinimg.com/736x/c8/ff/2a/c8ff2a91bbed8fd69db6a0946f89cd45.jpg", status: "Offline" },
 ];
 
+
 const mockChats: Chat[] = [
-  { id: "1", userId: "1", lastMessage: "Hey there!", timestamp: "10:30 AM", unreadCount: 0 },
+  { id: "1", userId: "1", lastMessage: "Mbaaa! Yangui Yves?", timestamp: "10:30 AM", unreadCount: 0 },
   { id: "2", userId: "2", lastMessage: "Meeting at 3 PM", timestamp: "9:20 AM", unreadCount: 2 },
-  { id: "3", userId: "3", lastMessage: "Did you check?", timestamp: "Yesterday", unreadCount: 0 },
+  { id: "3", userId: "3", lastMessage: "Namnaala. Ani sa yaye?", timestamp: "Yesterday", unreadCount: 0 },
+  { id: "4", userId: "4", lastMessage: "Paré gouma OOP. Paré nga?", timestamp: "Mon", unreadCount: 1 },
+  { id: "5", userId: "5", lastMessage: "Dangay dem Thies?", timestamp: "Sun", unreadCount: 0 },
 ];
 
 export default function ChatApp() {

@@ -32,40 +32,40 @@ const StatusScreen = () => {
     {
       id: '1',
       userId: '1',
-      userName: 'Alex Johnson',
-      avatar: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0',
+      userName: 'Monique starrrr',
+      avatar: 'https://i.pinimg.com/originals/68/d4/6d/68d46d54aac4b6315415ffed5437c3e3.jpg',
       time: '23 minutes ago',
       isViewed: false,
     },
     {
       id: '2',
       userId: '2',
-      userName: 'Sarah Miller',
-      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0',
+      userName: 'Tata Fatou',
+      avatar: 'https://media.istockphoto.com/id/1392583398/photo/portrait-40-year-old-black-african-woman.jpg?s=1024x1024&w=is&k=20&c=7Pz4ovPlix-OqxdIJEQDx8gM3ChWTgR6sq2AN1ooh9M=',
       time: '1 hour ago',
       isViewed: true,
     },
     {
       id: '3',
       userId: '3',
-      userName: 'Michael Chen',
-      avatar: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0',
+      userName: 'Adjzeuuuu',
+      avatar: 'https://i.pinimg.com/736x/c8/ff/2a/c8ff2a91bbed8fd69db6a0946f89cd45.jpg',
       time: '3 hours ago',
       isViewed: false,
     },
     {
       id: '4',
       userId: '4',
-      userName: 'Emma Wilson',
-      avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0',
+      userName: 'Amina',
+      avatar: 'https://i.pinimg.com/originals/8d/31/58/8d31584b0cab055f2c7a9d04fc461d32.jpg',
       time: '5 hours ago',
       isViewed: true,
     },
     {
       id: '5',
       userId: '5',
-      userName: 'David Kim',
-      avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0',
+      userName: 'Tima',
+      avatar: 'https://i.pinimg.com/originals/c9/49/0b/c9490b02e0d6ce748b57f48803760081.png',
       time: 'Yesterday',
       isViewed: false,
     },
@@ -123,7 +123,7 @@ const StatusScreen = () => {
           <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }}>
             <View style={{ position: 'relative' }}>
               <Image
-                source={{ uri: 'https://images.unsplash.com/photo-1578445714074-946b536079aa?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0' }}
+                source={{ uri: 'https://i.pinimg.com/736x/01/a5/1e/01a51e0fa16a202b7bad39cdb73cd9b8.jpg' }}
                 style={{ width: 56, height: 56, borderRadius: 28 }}
               />
               <View style={{

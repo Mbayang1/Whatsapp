@@ -5,13 +5,32 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ArrowLeft, Send, Paperclip, Mic } from "lucide-react-native";
 import * as ImagePicker from 'expo-image-picker';
 
+// User interface
+interface User {
+  id: string;
+  name: string;
+  avatar: string;
+  status: string;
+}
+
+// Messages interface
 interface Message {
   id: string;
   text?: string;
-  image?: string; // added image property
+  image?: string;
   timestamp: string;
   sender: "me" | "contact";
 }
+
+// Mock users array
+const mockUsers: User[] = [
+  { id: "1", name: "Tima", avatar: "https://i.pinimg.com/originals/c9/49/0b/c9490b02e0d6ce748b57f48803760081.png", status: "Online" },
+  { id: "2", name: "Amina", avatar: "https://i.pinimg.com/originals/8d/31/58/8d31584b0cab055f2c7a9d04fc461d32.jpg", status: "Offline" },
+  { id: "3", name: "Tata Fatou", avatar: "https://media.istockphoto.com/id/1392583398/photo/portrait-40-year-old-black-african-woman.jpg?s=1024x1024&w=is&k=20&c=7Pz4ovPlix-OqxdIJEQDx8gM3ChWTgR6sq2AN1ooh9M=", status: "Online" },
+  { id: "4", name: "Monique starrrr", avatar: "https://i.pinimg.com/originals/68/d4/6d/68d46d54aac4b6315415ffed5437c3e3.jpg", status: "Online" },
+  { id: "5", name: "Adjzeuuuu", avatar: "https://i.pinimg.com/736x/c8/ff/2a/c8ff2a91bbed8fd69db6a0946f89cd45.jpg", status: "Offline" },
+
+];
 
 export default function ChatDetailScreen() {
   const { userId } = useLocalSearchParams();
@@ -20,10 +39,8 @@ export default function ChatDetailScreen() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState("");
 
-  const contact = {
-    name: "Alex Johnson",
-    avatar: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=900",
-  };
+  // Get the contact from mockUsers array
+  const contact = mockUsers.find(u => u.id === userId) || mockUsers[0];
 
   useEffect(() => {
     const loadMessages = async () => {
@@ -34,33 +51,28 @@ export default function ChatDetailScreen() {
   }, [userId]);
 
   // Function to pick an image from gallery
-    const pickImage = async () => {
-    // Request permissions
-        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (!permissionResult.granted) return alert("Permission to access gallery is required!");
+  const pickImage = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permissionResult.granted) return alert("Permission to access gallery is required!");
 
-        // Pick an image
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: 'images', // <-- lowercase 'images'
-            quality: 0.5,
-        });
+    const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: 'images',
+        quality: 0.5,
+    });
 
-        if (!result.canceled && result.assets.length > 0) {
-            const newMsg: Message = {
-            id: Date.now().toString(),
-            image: result.assets[0].uri,
-            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-            sender: "me",
-            };
-            const updated = [...messages, newMsg];
-            setMessages(updated);
-            await AsyncStorage.setItem(`messages-${userId}`, JSON.stringify(updated));
-            setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100);
-        }
+    if (!result.canceled && result.assets.length > 0) {
+        const newMsg: Message = {
+          id: Date.now().toString(),
+          image: result.assets[0].uri,
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          sender: "me",
         };
-
-
-
+        const updated = [...messages, newMsg];
+        setMessages(updated);
+        await AsyncStorage.setItem(`messages-${userId}`, JSON.stringify(updated));
+        setTimeout(() => scrollViewRef.current?.scrollToEnd({ animated: true }), 100);
+    }
+  };
 
   const sendMessage = async () => {
     if (!message.trim()) return;

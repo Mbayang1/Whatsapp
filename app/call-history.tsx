@@ -19,14 +19,14 @@ const CallHistoryScreen = () => {
   const path = usePathname();
   
   const [calls, setCalls] = useState<Call[]>([
-    { id: '1', contactId: '1', contactName: 'Alex Johnson', contactAvatar: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=900', type: 'incoming', timestamp: '10:30 AM', duration: '12:45', date: 'Today' },
-    { id: '2', contactId: '2', contactName: 'Sarah Miller', contactAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=900', type: 'outgoing', timestamp: '9:15 AM', duration: '5:22', date: 'Today' },
-    { id: '3', contactId: '3', contactName: 'Michael Chen', contactAvatar: 'https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=900', type: 'missed', timestamp: 'Yesterday', duration: '', date: 'Yesterday' },
-    { id: '4', contactId: '4', contactName: 'Emma Davis', contactAvatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=900', type: 'incoming', timestamp: '2:30 PM', duration: '8:17', date: 'May 14' },
+    { id: '1', contactId: '1', contactName: 'Tima', contactAvatar: 'https://i.pinimg.com/originals/c9/49/0b/c9490b02e0d6ce748b57f48803760081.png', type: 'incoming', timestamp: '10:30 AM', duration: '12:45', date: 'Today' },
+    { id: '2', contactId: '2', contactName: 'Monique Starrrr', contactAvatar: 'https://i.pinimg.com/originals/68/d4/6d/68d46d54aac4b6315415ffed5437c3e3.jpg', type: 'outgoing', timestamp: '9:15 AM', duration: '5:22', date: 'Today' },
+    { id: '3', contactId: '3', contactName: 'Ousseynou', contactAvatar: 'https://images.pexels.com/photos/8370864/pexels-photo-8370864.jpeg?cs=srgb&dl=pexels-cottonbro-8370864.jpg&fm=jpg', type: 'missed', timestamp: 'Yesterday', duration: '', date: 'Yesterday' },
+    { id: '4', contactId: '4', contactName: 'Amina', contactAvatar: 'https://i.pinimg.com/originals/8d/31/58/8d31584b0cab055f2c7a9d04fc461d32.jpg', type: 'incoming', timestamp: '2:30 PM', duration: '8:17', date: 'May 14' },
     { id: '5', contactId: '5', contactName: 'David Wilson', contactAvatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=900', type: 'outgoing', timestamp: 'Mon', duration: '3:45', date: 'May 13' },
-    { id: '6', contactId: '6', contactName: 'Olivia Brown', contactAvatar: 'https://images.unsplash.com/photo-1578445714074-946b536079aa?w=900', type: 'missed', timestamp: 'Apr 30', duration: '', date: 'Apr 30' },
+    { id: '6', contactId: '6', contactName: 'Tata Fatou', contactAvatar: 'https://media.istockphoto.com/id/1392583398/photo/portrait-40-year-old-black-african-woman.jpg?s=1024x1024&w=is&k=20&c=7Pz4ovPlix-OqxdIJEQDx8gM3ChWTgR6sq2AN1ooh9M=', type: 'missed', timestamp: 'Apr 30', duration: '', date: 'Apr 30' },
     { id: '7', contactId: '7', contactName: 'James Taylor', contactAvatar: 'https://images.unsplash.com/photo-1605993439219-9d09d2020fa5?w=900', type: 'incoming', timestamp: 'Apr 28', duration: '15:32', date: 'Apr 28' },
-    { id: '8', contactId: '8', contactName: 'Sophia Martinez', contactAvatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=900', type: 'outgoing', timestamp: 'Apr 25', duration: '7:18', date: 'Apr 25' },
+    { id: '8', contactId: '8', contactName: 'Adjzeuuuu', contactAvatar: 'https://i.pinimg.com/736x/c8/ff/2a/c8ff2a91bbed8fd69db6a0946f89cd45.jpg', type: 'outgoing', timestamp: 'Apr 25', duration: '7:18', date: 'Apr 25' },
   ]);
 
   const topTabs: { name: string; route: "/" | "/status" | "/call-history" }[] = [

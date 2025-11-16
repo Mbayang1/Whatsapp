@@ -5,7 +5,7 @@ import { useRouter } from "expo-router";
 
 export default function UserProfile() {
   const router = useRouter();
-  const user = { name: "Alex Johnson", avatar: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=900", status: "Available for work" };
+  const user = { name: "Me", avatar: "https://i.pinimg.com/736x/01/a5/1e/01a51e0fa16a202b7bad39cdb73cd9b8.jpg", status: "Available for work" };
 
   return (
     <View style={styles.container}>
