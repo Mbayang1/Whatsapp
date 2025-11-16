@@ -2,23 +2,11 @@ import React, { useState, useEffect } from "react";
 import { View, Text, FlatList, TextInput, Image, TouchableOpacity, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Search, Phone, MoreVertical } from "lucide-react-native";
-import { useRouter } from "expo-router";
+import { useRouter, usePathname } from "expo-router";
 
 // Types
-interface User {
-  id: string;
-  name: string;
-  avatar: string;
-  status: string;
-}
-
-interface Chat {
-  id: string;
-  userId: string;
-  lastMessage: string;
-  timestamp: string;
-  unreadCount: number;
-}
+interface User { id: string; name: string; avatar: string; status: string; }
+interface Chat { id: string; userId: string; lastMessage: string; timestamp: string; unreadCount: number; }
 
 // Mock data
 const mockUsers: User[] = [
@@ -38,20 +26,16 @@ export default function ChatApp() {
   const [users, setUsers] = useState<User[]>(mockUsers);
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
+  const path = usePathname();
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
+  useEffect(() => { loadData(); }, []);
   const loadData = async () => {
     try {
       const storedChats = await AsyncStorage.getItem("chats");
       const storedUsers = await AsyncStorage.getItem("users");
       if (storedChats) setChats(JSON.parse(storedChats));
       if (storedUsers) setUsers(JSON.parse(storedUsers));
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) { console.log(error); }
   };
 
   const filteredChats = chats.filter(chat => {
@@ -59,14 +43,10 @@ export default function ChatApp() {
     return user?.name.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
-  const openChat = (userId: string) => {
-    router.push(`/chat-detail?userId=${userId}`);
-  };
+  const openChat = (userId: string) => { router.push(`/chat-detail?userId=${userId}` as const); };
 
   const renderItem = ({ item }: { item: Chat }) => {
-    const user = users.find(u => u.id === item.userId);
-    if (!user) return null;
-
+    const user = users.find(u => u.id === item.userId); if (!user) return null;
     return (
       <TouchableOpacity style={styles.chatItem} onPress={() => openChat(user.id)}>
         <Image source={{ uri: user.avatar }} style={styles.avatar} />
@@ -75,14 +55,10 @@ export default function ChatApp() {
             <Text style={styles.name}>{user.name}</Text>
             <Text style={styles.timestamp}>{item.timestamp}</Text>
           </View>
-          <Text style={item.unreadCount > 0 ? styles.lastMessageUnread : styles.lastMessage}>
-            {item.lastMessage}
-          </Text>
+          <Text style={item.unreadCount > 0 ? styles.lastMessageUnread : styles.lastMessage}>{item.lastMessage}</Text>
         </View>
         {item.unreadCount > 0 && (
-          <View style={styles.unreadBadge}>
-            <Text style={styles.unreadText}>{item.unreadCount}</Text>
-          </View>
+          <View style={styles.unreadBadge}><Text style={styles.unreadText}>{item.unreadCount}</Text></View>
         )}
       </TouchableOpacity>
     );
@@ -90,24 +66,31 @@ export default function ChatApp() {
 
   return (
     <View style={styles.container}>
+      {/* Top Tabs */}
+      <View style={styles.topTabs}>
+        {[
+          { name: "Chats", route: "/" as const },
+          { name: "Status", route: "/status" as const },
+          { name: "Calls", route: "/call-history" as const },
+        ].map(tab => (
+          <TouchableOpacity key={tab.name} onPress={() => router.push(tab.route)}>
+            <Text style={path === tab.route ? styles.activeTab : styles.inactiveTab}>{tab.name}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Chats</Text>
+        <View>
+          <Text style={styles.headerTitle}>Chats</Text>
+        </View>
         <View style={styles.headerIcons}>
-          <TouchableOpacity style={{ marginRight: 10 }}>
-            <Phone size={24} color="#fff" />
-          </TouchableOpacity>
-          <TouchableOpacity>
-            <MoreVertical size={24} color="#fff" />
-          </TouchableOpacity>
+          <TouchableOpacity style={{ marginRight: 10 }}><Phone size={24} color="#fff" /></TouchableOpacity>
+          <TouchableOpacity><MoreVertical size={24} color="#fff" /></TouchableOpacity>
         </View>
         <View style={styles.searchContainer}>
           <Search size={20} color="#9CA3AF" />
-          <TextInput
-            placeholder="Search"
-            style={styles.searchInput}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
+          <TextInput placeholder="Search" style={styles.searchInput} value={searchQuery} onChangeText={setSearchQuery} />
         </View>
       </View>
 
@@ -123,8 +106,11 @@ export default function ChatApp() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#F9FAFB" },
-  header: { backgroundColor: "#10B981", paddingTop: 50, paddingHorizontal: 16, paddingBottom: 16 },
-  headerTitle: { fontSize: 24, fontWeight: "bold", color: "#fff" },
+  topTabs: { flexDirection: "row", justifyContent: "space-around", paddingTop: 50, paddingBottom: 10, backgroundColor: "#10B981" },
+  activeTab: { color: "#fff", fontWeight: "bold", fontSize: 16, borderBottomWidth: 2, borderBottomColor: "#fff", paddingBottom: 5 },
+  inactiveTab: { color: "#e5e5e5", fontSize: 16, paddingBottom: 5 },
+  header: { backgroundColor: "#10B981", paddingHorizontal: 16, paddingBottom: 16 },
+  headerTitle: { fontSize: 24, fontWeight: "bold", color: "#fff", marginTop: 8 },
   headerIcons: { position: "absolute", right: 16, top: 50, flexDirection: "row" },
   searchContainer: { flexDirection: "row", backgroundColor: "#fff", padding: 8, borderRadius: 8, marginTop: 16, alignItems: "center" },
   searchInput: { flex: 1, marginLeft: 8, fontSize: 16 },
